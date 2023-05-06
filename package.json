@@ -15,7 +15,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/marcelosouzaufpb/fastify-prisma-rest-api"
+    "url": "git+https://github.com/roberto-silva/projeto-final-node-back"
   },
   "keywords": [
     "nodejs",
@@ -23,9 +23,9 @@
     "demo"
   ],
   "bugs": {
-    "url": "https://github.com/marcelosouzaufpb/fastify-prisma-rest-api/issues"
+    "url": "https://github.com/roberto-silva/projeto-final-node-back/issues"
   },
-  "homepage": "https://github.com/marcelosouzaufpb/fastify-prisma-rest-api#readme",
+  "homepage": "https://github.com/roberto-silva/projeto-final-node-back#readme",
   "dependencies": {
     "@faker-js/faker": "^6.0.0-beta.0",
     "@prisma/client": "^3.10.0",
