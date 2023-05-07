@@ -17,55 +17,31 @@ var __copyProps = (to, from, except, desc) => {
 };
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
-// src/modules/user/user.schema.ts
-var user_schema_exports = {};
-__export(user_schema_exports, {
+// src/modules/auth/auth.schema.ts
+var auth_schema_exports = {};
+__export(auth_schema_exports, {
   $ref: () => $ref,
-  userSchemas: () => userSchemas
+  loginSchemas: () => loginSchemas
 });
-module.exports = __toCommonJS(user_schema_exports);
+module.exports = __toCommonJS(auth_schema_exports);
 var import_zod = require("zod");
 var import_fastify_zod = require("fastify-zod");
-var userCore = {
+var loginSchema = import_zod.z.object({
   email: import_zod.z.string({
     required_error: "Email is required",
     invalid_type_error: "Email must be a string"
   }).email(),
-  name: import_zod.z.string()
-};
-var createUserSchema = import_zod.z.object({
-  ...userCore,
-  password: import_zod.z.string({
-    required_error: "Password is required",
-    invalid_type_error: "Password must be a string"
-  })
+  password: import_zod.z.string()
 });
-var createUserResponseSchema = import_zod.z.object({
-  id: import_zod.z.number(),
-  ...userCore
+var loginResponseSchema = import_zod.z.object({
+  accessToken: import_zod.z.string()
 });
-var updateUserSchema = import_zod.z.object({
-  id: import_zod.z.number(),
-  ...userCore,
-  password: import_zod.z.string({
-    required_error: "Password is required",
-    invalid_type_error: "Password must be a string"
-  })
-});
-var findeUserSchema = import_zod.z.object({
-  email: import_zod.z.string({
-    required_error: "Email is required",
-    invalid_type_error: "Email must be a string"
-  }).email()
-});
-var { schemas: userSchemas, $ref } = (0, import_fastify_zod.buildJsonSchemas)({
-  createUserSchema,
-  updateUserSchema,
-  createUserResponseSchema,
-  findeUserSchema
+var { schemas: loginSchemas, $ref } = (0, import_fastify_zod.buildJsonSchemas)({
+  loginSchema,
+  loginResponseSchema
 });
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   $ref,
-  userSchemas
+  loginSchemas
 });

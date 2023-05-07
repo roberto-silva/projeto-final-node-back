@@ -5,14 +5,18 @@ const server = buildServer();
 const PORT = process.env.PORT ? Number(process.env.PORT) : 3000;
 
 async function main() {
-  try {
-    await server.listen(PORT);
+    try {
 
-    console.log(`Server ready at http://localhost:3000`);
-  } catch (e) {
-    console.error(e);
-    process.exit(1);
-  }
+        await server.listen({
+            port: PORT
+        }).then(() => {
+            console.log(`HTTP running, port - ${PORT}`)
+        });
+
+    } catch (error: any) {
+        console.error(error);
+        process.exit(1);
+    }
 }
 
 main();

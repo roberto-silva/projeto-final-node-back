@@ -27,30 +27,44 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 ));
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
-// src/utils/hash.ts
-var hash_exports = {};
-__export(hash_exports, {
-  hashPassword: () => hashPassword,
-  isAuthenticate: () => isAuthenticate,
-  verifyPassword: () => verifyPassword
+// src/modules/auth/auth.controller.ts
+var auth_controller_exports = {};
+__export(auth_controller_exports, {
+  loginHandler: () => loginHandler
 });
-module.exports = __toCommonJS(hash_exports);
+module.exports = __toCommonJS(auth_controller_exports);
+
+// src/utils/hash.ts
 var import_crypto = __toESM(require("crypto"));
-function hashPassword(password) {
-  const salt = import_crypto.default.randomBytes(16).toString("hex");
-  const hash = import_crypto.default.pbkdf2Sync(password, salt, 1e3, 64, "sha512").toString("hex");
-  return { hash, salt };
-}
 function verifyPassword({ candidatePassword, salt, hash }) {
   const candidateHash = import_crypto.default.pbkdf2Sync(candidatePassword, salt, 1e3, 64, "sha512").toString("hex");
   return candidateHash === hash;
 }
-function isAuthenticate(server) {
-  return { preHandler: [server.authenticate] };
+
+// src/utils/prisma.ts
+var import_client = require("@prisma/client");
+var prisma = new import_client.PrismaClient();
+var prisma_default = prisma;
+
+// src/modules/user/user.service.ts
+async function findUserByEmail(email) {
+  return await prisma_default.user.findUnique({ where: { email } });
+}
+
+// src/modules/auth/auth.controller.ts
+async function loginHandler(request, reply) {
+  const body = request?.body;
+  const user = await findUserByEmail(body?.email || "");
+  if (!user)
+    return reply.code(401).send({ message: "Invalid email or password" });
+  const correctPassword = verifyPassword({ candidatePassword: body.password, salt: user.salt, hash: user.password });
+  if (correctPassword) {
+    const { password, salt, ...rest } = user;
+    return { accessToken: request.jwt.sign(rest) };
+  }
+  return reply.code(401).send({ message: "Invalid email or password" });
 }
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
-  hashPassword,
-  isAuthenticate,
-  verifyPassword
+  loginHandler
 });

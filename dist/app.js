@@ -1,39 +1,10 @@
 "use strict";
 var __create = Object.create;
 var __defProp = Object.defineProperty;
-var __defProps = Object.defineProperties;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
-var __getOwnPropDescs = Object.getOwnPropertyDescriptors;
 var __getOwnPropNames = Object.getOwnPropertyNames;
-var __getOwnPropSymbols = Object.getOwnPropertySymbols;
 var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
-var __propIsEnum = Object.prototype.propertyIsEnumerable;
-var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues = (a, b) => {
-  for (var prop in b || (b = {}))
-    if (__hasOwnProp.call(b, prop))
-      __defNormalProp(a, prop, b[prop]);
-  if (__getOwnPropSymbols)
-    for (var prop of __getOwnPropSymbols(b)) {
-      if (__propIsEnum.call(b, prop))
-        __defNormalProp(a, prop, b[prop]);
-    }
-  return a;
-};
-var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
-var __objRest = (source, exclude) => {
-  var target = {};
-  for (var prop in source)
-    if (__hasOwnProp.call(source, prop) && exclude.indexOf(prop) < 0)
-      target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols)
-    for (var prop of __getOwnPropSymbols(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum.call(source, prop))
-        target[prop] = source[prop];
-    }
-  return target;
-};
 var __copyProps = (to, from, except, desc) => {
   if (from && typeof from === "object" || typeof from === "function") {
     for (let key of __getOwnPropNames(from))
@@ -50,185 +21,12 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
   isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
   mod
 ));
-var __async = (__this, __arguments, generator) => {
-  return new Promise((resolve, reject) => {
-    var fulfilled = (value) => {
-      try {
-        step(generator.next(value));
-      } catch (e) {
-        reject(e);
-      }
-    };
-    var rejected = (value) => {
-      try {
-        step(generator.throw(value));
-      } catch (e) {
-        reject(e);
-      }
-    };
-    var step = (x) => x.done ? resolve(x.value) : Promise.resolve(x.value).then(fulfilled, rejected);
-    step((generator = generator.apply(__this, __arguments)).next());
-  });
-};
 
 // src/server.ts
 var import_fastify = __toESM(require("fastify"));
-var import_fastify_jwt = __toESM(require("fastify-jwt"));
-var import_fastify_swagger = __toESM(require("fastify-swagger"));
-var import_fastify_zod3 = require("fastify-zod");
-
-// ../Projetos/PUC/fastify-prisma-rest-api/src/utils/hash.ts
-var import_crypto = __toESM(require("crypto"));
-function hashPassword(password) {
-  const salt = import_crypto.default.randomBytes(16).toString("hex");
-  const hash = import_crypto.default.pbkdf2Sync(password, salt, 1e3, 64, "sha512").toString("hex");
-  return { hash, salt };
-}
-function verifyPassword({
-  candidatePassword,
-  salt,
-  hash
-}) {
-  const candidateHash = import_crypto.default.pbkdf2Sync(candidatePassword, salt, 1e3, 64, "sha512").toString("hex");
-  return candidateHash === hash;
-}
-
-// ../Projetos/PUC/fastify-prisma-rest-api/src/utils/prisma.ts
-var import_client = require("@prisma/client");
-var prisma = new import_client.PrismaClient();
-var prisma_default = prisma;
-
-// src/modules/user/user.service.ts
-function createUser(input) {
-  return __async(this, null, function* () {
-    const _a = input, { password } = _a, rest = __objRest(_a, ["password"]);
-    const { hash, salt } = hashPassword(password);
-    const user = yield prisma_default.user.create({
-      data: __spreadProps(__spreadValues({}, rest), { salt, password: hash })
-    });
-    return user;
-  });
-}
-function updateUser(email, user) {
-  return __async(this, null, function* () {
-    return yield prisma_default.user.update({
-      where: { email },
-      data: user
-    });
-  });
-}
-function findUserByEmail(email) {
-  return __async(this, null, function* () {
-    return yield prisma_default.user.findUnique({
-      where: {
-        email
-      }
-    });
-  });
-}
-function removeUserByEmail(email) {
-  return __async(this, null, function* () {
-    return yield prisma_default.user.delete({
-      where: {
-        email
-      }
-    });
-  });
-}
-function findUsers() {
-  return __async(this, null, function* () {
-    return prisma_default.user.findMany({
-      select: {
-        email: true,
-        name: true,
-        id: true
-      }
-    });
-  });
-}
-
-// src/modules/user/user.controller.ts
-function registerUserHandler(request, reply) {
-  return __async(this, null, function* () {
-    const body = request.body;
-    try {
-      const user = yield createUser(body);
-      return reply.code(201).send(user);
-    } catch (e) {
-      console.log(e);
-      return reply.code(500).send(e);
-    }
-  });
-}
-function updateUserHandler(request, reply) {
-  return __async(this, null, function* () {
-    var _a;
-    try {
-      const email = (_a = request == null ? void 0 : request.params) == null ? void 0 : _a.email;
-      const body = request.body;
-      const user = yield updateUser(email, body);
-      return reply.code(201).send(user);
-    } catch (e) {
-      console.log(e);
-      return reply.code(500).send(e);
-    }
-  });
-}
-function loginHandler(request, reply) {
-  return __async(this, null, function* () {
-    const body = request.body;
-    const user = yield findUserByEmail(body.email);
-    if (!user) {
-      return reply.code(401).send({
-        message: "Invalid email or password"
-      });
-    }
-    const correctPassword = verifyPassword({
-      candidatePassword: body.password,
-      salt: user.salt,
-      hash: user.password
-    });
-    if (correctPassword) {
-      const _a = user, { password, salt } = _a, rest = __objRest(_a, ["password", "salt"]);
-      return { accessToken: request.jwt.sign(rest) };
-    }
-    return reply.code(401).send({
-      message: "Invalid email or password"
-    });
-  });
-}
-function getUsersHandler() {
-  return __async(this, null, function* () {
-    const users = yield findUsers();
-    return users;
-  });
-}
-function getUsersByEmailHandler(request, reply) {
-  return __async(this, null, function* () {
-    var _a;
-    try {
-      const email = (_a = request == null ? void 0 : request.params) == null ? void 0 : _a.email;
-      const user = yield findUserByEmail(email);
-      return reply.code(201).send(user);
-    } catch (e) {
-      console.log(e);
-      return reply.code(500).send(e);
-    }
-  });
-}
-function deleteUsersByEmailHandler(request, reply) {
-  return __async(this, null, function* () {
-    var _a;
-    try {
-      const email = (_a = request == null ? void 0 : request.params) == null ? void 0 : _a.email;
-      const user = yield removeUserByEmail(email);
-      return reply.code(201).send(user);
-    } catch (e) {
-      console.log(e);
-      return reply.code(500).send(e);
-    }
-  });
-}
+var import_jwt = __toESM(require("@fastify/jwt"));
+var import_swagger = __toESM(require("@fastify/swagger"));
+var import_fastify_zod4 = require("fastify-zod");
 
 // src/modules/user/user.schema.ts
 var import_zod = require("zod");
@@ -240,21 +38,24 @@ var userCore = {
   }).email(),
   name: import_zod.z.string()
 };
-var createUserSchema = import_zod.z.object(__spreadProps(__spreadValues({}, userCore), {
+var createUserSchema = import_zod.z.object({
+  ...userCore,
   password: import_zod.z.string({
     required_error: "Password is required",
     invalid_type_error: "Password must be a string"
   })
-}));
-var createUserResponseSchema = import_zod.z.object(__spreadValues({
-  id: import_zod.z.number()
-}, userCore));
-var loginSchema = import_zod.z.object({
-  email: import_zod.z.string({
-    required_error: "Email is required",
-    invalid_type_error: "Email must be a string"
-  }).email(),
-  password: import_zod.z.string()
+});
+var createUserResponseSchema = import_zod.z.object({
+  id: import_zod.z.number(),
+  ...userCore
+});
+var updateUserSchema = import_zod.z.object({
+  id: import_zod.z.number(),
+  ...userCore,
+  password: import_zod.z.string({
+    required_error: "Password is required",
+    invalid_type_error: "Password must be a string"
+  })
 });
 var findeUserSchema = import_zod.z.object({
   email: import_zod.z.string({
@@ -262,155 +63,12 @@ var findeUserSchema = import_zod.z.object({
     invalid_type_error: "Email must be a string"
   }).email()
 });
-var loginResponseSchema = import_zod.z.object({
-  accessToken: import_zod.z.string()
-});
 var { schemas: userSchemas, $ref } = (0, import_fastify_zod.buildJsonSchemas)({
   createUserSchema,
+  updateUserSchema,
   createUserResponseSchema,
-  loginSchema,
-  loginResponseSchema,
   findeUserSchema
 });
-
-// src/modules/user/user.route.ts
-function userRoutes(server2) {
-  return __async(this, null, function* () {
-    server2.get("/", { preHandler: [server2.authenticate] }, getUsersHandler);
-    server2.get("/:email", { preHandler: [server2.authenticate] }, getUsersByEmailHandler);
-    server2.post("/", {
-      schema: {
-        body: $ref("createUserSchema"),
-        response: { 201: $ref("createUserResponseSchema") }
-      }
-    }, registerUserHandler);
-    server2.put("/:email", {
-      preHandler: [server2.authenticate],
-      schema: {
-        body: $ref("loginSchema"),
-        response: { 201: $ref("createUserResponseSchema") }
-      }
-    }, updateUserHandler);
-    server2.post("/login", {
-      schema: {
-        body: $ref("loginSchema"),
-        response: { 200: $ref("loginResponseSchema") }
-      }
-    }, loginHandler);
-    server2.delete("/:email", { preHandler: [server2.authenticate] }, deleteUsersByEmailHandler);
-  });
-}
-var user_route_default = userRoutes;
-
-// src/modules/product/product.service.ts
-function getProducts() {
-  return prisma_default.product.findMany({
-    select: {
-      content: true,
-      title: true,
-      price: true,
-      id: true,
-      createdAt: true,
-      updatedAt: true,
-      owner: {
-        select: {
-          name: true,
-          id: true
-        }
-      }
-    }
-  });
-}
-function findProductById(id) {
-  return __async(this, null, function* () {
-    return yield prisma_default.product.findUnique({
-      where: {
-        id
-      }
-    });
-  });
-}
-function createProduct(input) {
-  return __async(this, null, function* () {
-    const product = yield prisma_default.product.create({
-      data: input
-    });
-    return product;
-  });
-}
-function updateProduct(id, data) {
-  return __async(this, null, function* () {
-    return yield prisma_default.product.update({
-      where: { id },
-      data
-    });
-  });
-}
-function removeProductById(id) {
-  return __async(this, null, function* () {
-    return yield prisma_default.product.delete({
-      where: {
-        id
-      }
-    });
-  });
-}
-
-// src/modules/product/product.controller.ts
-function createProductHandler(request) {
-  return __async(this, null, function* () {
-    const product = yield createProduct(__spreadProps(__spreadValues({}, request.body), {
-      ownerId: request.user.id
-    }));
-    return product;
-  });
-}
-function updateProductHandler(request, reply) {
-  return __async(this, null, function* () {
-    var _a;
-    try {
-      const id = Number((_a = request == null ? void 0 : request.params) == null ? void 0 : _a.id);
-      const body = request.body;
-      const product = yield updateProduct(id, body);
-      return reply.code(201).send(product);
-    } catch (e) {
-      console.log(e);
-      return reply.code(500).send(e);
-    }
-  });
-}
-function getProductsHandler() {
-  return __async(this, null, function* () {
-    const products = yield getProducts();
-    return products;
-  });
-}
-function getProductByIdHandler(request, reply) {
-  return __async(this, null, function* () {
-    var _a;
-    try {
-      const id = Number((_a = request == null ? void 0 : request.params) == null ? void 0 : _a.id);
-      const product = yield findProductById(id);
-      return reply.code(201).send(product);
-    } catch (e) {
-      console.log(e);
-      return reply.code(500).send(e);
-    }
-  });
-}
-function deleteProductByIdHandler(request, reply) {
-  return __async(this, null, function* () {
-    var _a;
-    try {
-      const id = Number((_a = request == null ? void 0 : request.params) == null ? void 0 : _a.id);
-      const product = yield removeProductById(id);
-      return reply.code(201).send(product);
-    } catch (e) {
-      console.log(e);
-      return reply.code(500).send(e);
-    }
-  });
-}
 
 // src/modules/product/product.schema.ts
 var import_zod2 = require("zod");
@@ -431,8 +89,13 @@ var findeProducSchema = import_zod2.z.object({
     invalid_type_error: "Id must be a number"
   })
 });
-var createProductSchema = import_zod2.z.object(__spreadValues({}, productInput));
-var productResponseSchema = import_zod2.z.object(__spreadValues(__spreadValues({}, productInput), productGenerated));
+var createProductSchema = import_zod2.z.object({
+  ...productInput
+});
+var productResponseSchema = import_zod2.z.object({
+  ...productInput,
+  ...productGenerated
+});
 var productsResponseSchema = import_zod2.z.array(productResponseSchema);
 var { schemas: productSchemas, $ref: $ref2 } = (0, import_fastify_zod2.buildJsonSchemas)({
   createProductSchema,
@@ -441,77 +104,284 @@ var { schemas: productSchemas, $ref: $ref2 } = (0, import_fastify_zod2.buildJson
   findeProducSchema
 });
 
-// src/modules/product/product.route.ts
-function productRoutes(server2) {
-  return __async(this, null, function* () {
-    server2.get(
-      "/",
-      {
-        preHandler: [server2.authenticate],
-        schema: {
-          response: { 200: $ref2("productsResponseSchema") }
-        }
-      },
-      getProductsHandler
-    );
-    server2.get("/:id", { preHandler: [server2.authenticate] }, getProductByIdHandler);
-    server2.post(
-      "/",
-      {
-        preHandler: [server2.authenticate],
-        schema: {
-          body: $ref2("createProductSchema"),
-          response: { 201: $ref2("productResponseSchema") }
-        }
-      },
-      createProductHandler
-    );
-    server2.put("/:id", {
-      preHandler: [server2.authenticate],
-      schema: {
-        body: $ref2("createProductSchema"),
-        response: { 201: $ref2("productResponseSchema") }
-      }
-    }, updateProductHandler);
-    server2.delete("/:id", { preHandler: [server2.authenticate] }, deleteProductByIdHandler);
+// src/utils/hash.ts
+var import_crypto = __toESM(require("crypto"));
+function hashPassword(password) {
+  const salt = import_crypto.default.randomBytes(16).toString("hex");
+  const hash = import_crypto.default.pbkdf2Sync(password, salt, 1e3, 64, "sha512").toString("hex");
+  return { hash, salt };
+}
+function verifyPassword({ candidatePassword, salt, hash }) {
+  const candidateHash = import_crypto.default.pbkdf2Sync(candidatePassword, salt, 1e3, 64, "sha512").toString("hex");
+  return candidateHash === hash;
+}
+function isAuthenticate(server2) {
+  return { preHandler: [server2.authenticate] };
+}
+
+// src/utils/prisma.ts
+var import_client = require("@prisma/client");
+var prisma = new import_client.PrismaClient();
+var prisma_default = prisma;
+
+// src/modules/user/user.service.ts
+async function findUsers() {
+  return prisma_default.user.findMany({ select: { email: true, name: true, id: true } });
+}
+async function findUserByEmail(email) {
+  return await prisma_default.user.findUnique({ where: { email } });
+}
+async function createUser(input) {
+  const { password, ...rest } = input;
+  const { hash, salt } = hashPassword(password);
+  const user = await prisma_default.user.create({ data: { ...rest, salt, password: hash } });
+  return user;
+}
+async function updateUser(email, user) {
+  return await prisma_default.user.update({ where: { email }, data: user });
+}
+async function removeUserByEmail(email) {
+  return await prisma_default.user.delete({ where: { email } });
+}
+
+// src/modules/user/user.controller.ts
+async function getUsersHandler(request, reply) {
+  try {
+    const users = await findUsers();
+    return reply.code(201).send(users);
+  } catch (error) {
+    console.log(error);
+    return reply.code(500).send(error);
+  }
+}
+async function getUsersByEmailHandler(request, reply) {
+  try {
+    const user = await findUserByEmail(request?.params?.email || "");
+    return reply.code(201).send(user);
+  } catch (error) {
+    console.log(error);
+    return reply.code(500).send(error);
+  }
+}
+async function postUserHandler(request, reply) {
+  try {
+    const user = await createUser(request?.body || {});
+    return reply.code(201).send(user);
+  } catch (error) {
+    console.log(error);
+    return reply.code(500).send(error);
+  }
+}
+async function putUserHandler(request, reply) {
+  try {
+    const user = await updateUser(request?.params?.email || "", request?.body || {});
+    return reply.code(201).send(user);
+  } catch (e) {
+    console.log(e);
+    return reply.code(500).send(e);
+  }
+}
+async function deleteUsersByEmailHandler(request, reply) {
+  try {
+    const user = await removeUserByEmail(request?.params?.email || "");
+    return reply.code(201).send(user);
+  } catch (e) {
+    console.log(e);
+    return reply.code(500).send(e);
+  }
+}
+
+// src/modules/user/user.route.ts
+var createUserValidations = {
+  schema: {
+    body: $ref("createUserSchema"),
+    response: { 201: $ref("createUserResponseSchema") }
+  }
+};
+var updateUserValidations = {
+  schema: {
+    body: $ref("updateUserSchema"),
+    response: { 201: $ref("createUserResponseSchema") }
+  }
+};
+async function userRoutes(server2) {
+  server2.get("/", isAuthenticate(server2), getUsersHandler);
+  server2.get("/:email", isAuthenticate(server2), getUsersByEmailHandler);
+  server2.post("/", createUserValidations, postUserHandler);
+  server2.put("/:email", { ...updateUserValidations, ...isAuthenticate(server2) }, putUserHandler);
+  server2.delete("/:email", isAuthenticate(server2), deleteUsersByEmailHandler);
+}
+var user_route_default = userRoutes;
+
+// src/modules/product/product.service.ts
+async function getProducts() {
+  return await prisma_default.product.findMany({
+    select: {
+      content: true,
+      title: true,
+      price: true,
+      id: true,
+      createdAt: true,
+      updatedAt: true,
+      owner: { select: { name: true, id: true } }
+    }
   });
+}
+async function findProductById(id) {
+  return await prisma_default.product.findUnique({ where: { id } });
+}
+async function createProduct(input) {
+  return await prisma_default.product.create({ data: input });
+}
+async function updateProduct(id, data) {
+  return await prisma_default.product.update({ where: { id }, data });
+}
+async function removeProductById(id) {
+  return await prisma_default.product.delete({ where: { id } });
+}
+
+// src/modules/product/product.controller.ts
+async function getProductsHandler(request, reply) {
+  try {
+    const products = await getProducts();
+    return reply.code(201).send(products);
+  } catch (error) {
+    console.log(error);
+    return reply.code(500).send(error);
+  }
+}
+async function getProductByIdHandler(request, reply) {
+  try {
+    const product = await findProductById(Number(request?.params?.id));
+    return reply.code(201).send(product);
+  } catch (e) {
+    console.log(e);
+    return reply.code(500).send(e);
+  }
+}
+async function postProductHandler(request, reply) {
+  try {
+    const product = await createProduct({ ...request.body, ownerId: request?.user?.id });
+    return reply.code(201).send(product);
+  } catch (e) {
+    console.log(e);
+    return reply.code(500).send(e);
+  }
+}
+async function putProductHandler(request, reply) {
+  try {
+    const product = await updateProduct(Number(request?.params?.id), request?.body);
+    return reply.code(201).send(product);
+  } catch (e) {
+    console.log(e);
+    return reply.code(500).send(e);
+  }
+}
+async function deleteProductByIdHandler(request, reply) {
+  try {
+    const product = await removeProductById(Number(request?.params?.id));
+    return reply.code(201).send(product);
+  } catch (e) {
+    console.log(e);
+    return reply.code(500).send(e);
+  }
+}
+
+// src/modules/product/product.route.ts
+var findProductsResponse = {
+  schema: {
+    response: { 200: $ref2("productsResponseSchema") }
+  }
+};
+var modifyProducts = {
+  schema: {
+    body: $ref2("createProductSchema"),
+    response: { 201: $ref2("productResponseSchema") }
+  }
+};
+async function productRoutes(server2) {
+  server2.get("/", { ...isAuthenticate(server2), ...findProductsResponse }, getProductsHandler);
+  server2.get("/:id", isAuthenticate(server2), getProductByIdHandler);
+  server2.post("/", { ...isAuthenticate(server2), ...modifyProducts }, postProductHandler);
+  server2.put("/:id", { ...isAuthenticate(server2), ...modifyProducts }, putProductHandler);
+  server2.delete("/:id", isAuthenticate(server2), deleteProductByIdHandler);
 }
 var product_route_default = productRoutes;
 
-// package.json
-var version = "1.0.0";
+// src/modules/auth/auth.schema.ts
+var import_zod3 = require("zod");
+var import_fastify_zod3 = require("fastify-zod");
+var loginSchema = import_zod3.z.object({
+  email: import_zod3.z.string({
+    required_error: "Email is required",
+    invalid_type_error: "Email must be a string"
+  }).email(),
+  password: import_zod3.z.string()
+});
+var loginResponseSchema = import_zod3.z.object({
+  accessToken: import_zod3.z.string()
+});
+var { schemas: loginSchemas, $ref: $ref3 } = (0, import_fastify_zod3.buildJsonSchemas)({
+  loginSchema,
+  loginResponseSchema
+});
+
+// src/modules/auth/auth.controller.ts
+async function loginHandler(request, reply) {
+  const body = request?.body;
+  const user = await findUserByEmail(body?.email || "");
+  if (!user)
+    return reply.code(401).send({ message: "Invalid email or password" });
+  const correctPassword = verifyPassword({ candidatePassword: body.password, salt: user.salt, hash: user.password });
+  if (correctPassword) {
+    const { password, salt, ...rest } = user;
+    return { accessToken: request.jwt.sign(rest) };
+  }
+  return reply.code(401).send({ message: "Invalid email or password" });
+}
+
+// src/modules/auth/auth.route.ts
+var loginUserValidations = {
+  schema: {
+    body: $ref3("loginSchema"),
+    response: { 200: $ref3("loginResponseSchema") }
+  }
+};
+async function authRoutes(server2) {
+  server2.post("/login", loginUserValidations, loginHandler);
+}
+var auth_route_default = authRoutes;
 
 // src/server.ts
-function buildServer() {
-  const server2 = (0, import_fastify.default)();
-  server2.register(import_fastify_jwt.default, {
-    secret: "ndkandnan78duy9sau87dbndsa89u7dsy789adb"
-  });
+function buildJwtService(server2) {
+  server2.register(import_jwt.default, { secret: "ndkandnan78duy9sau87dbndsa89u7dsy789adb" });
   server2.decorate(
     "authenticate",
-    (request, reply) => __async(this, null, function* () {
+    async (request, reply) => {
       try {
-        yield request.jwtVerify();
+        await request.jwtVerify();
       } catch (e) {
         return reply.send(e);
       }
-    })
+    }
   );
-  server2.get("/healthcheck", function() {
-    return __async(this, null, function* () {
-      return { status: "OK" };
-    });
+  server2.get("/healthcheck", async function() {
+    return { status: "OK" };
   });
   server2.addHook("preHandler", (req, reply, next) => {
     req.jwt = server2.jwt;
     return next();
   });
-  for (const schema of [...userSchemas, ...productSchemas]) {
+}
+function upSchemas(server2) {
+  for (const schema of [...userSchemas, ...productSchemas, ...loginSchemas]) {
     server2.addSchema(schema);
   }
+}
+function buildSwaggerService(server2) {
   server2.register(
-    import_fastify_swagger.default,
-    (0, import_fastify_zod3.withRefResolver)({
+    import_swagger.default,
+    (0, import_fastify_zod4.withRefResolver)({
       routePrefix: "/docs",
       exposeRoute: true,
       staticCSP: true,
@@ -519,13 +389,29 @@ function buildServer() {
         info: {
           title: "Fastify API",
           description: "API for some products",
-          version
+          version: "1.0.0"
         }
       }
     })
   );
+}
+function upRoutes(server2) {
+  server2.register(auth_route_default, { prefix: "api/v1/auth" });
   server2.register(user_route_default, { prefix: "api/v1/users" });
   server2.register(product_route_default, { prefix: "api/v1/products" });
+}
+function setCrossOrigin(server2) {
+  server2.register(require("@fastify/cors"), {
+    origin: "*"
+  });
+}
+function buildServer() {
+  const server2 = (0, import_fastify.default)();
+  buildJwtService(server2);
+  upSchemas(server2);
+  buildSwaggerService(server2);
+  upRoutes(server2);
+  setCrossOrigin(server2);
   return server2;
 }
 var server_default = buildServer;
@@ -533,15 +419,16 @@ var server_default = buildServer;
 // src/app.ts
 var server = server_default();
 var PORT = process.env.PORT ? Number(process.env.PORT) : 3e3;
-function main() {
-  return __async(this, null, function* () {
-    try {
-      yield server.listen(PORT);
-      console.log(`Server ready at http://localhost:3000`);
-    } catch (e) {
-      console.error(e);
-      process.exit(1);
-    }
-  });
+async function main() {
+  try {
+    await server.listen({
+      port: PORT
+    }).then(() => {
+      console.log(`HTTP running, port - ${PORT}`);
+    });
+  } catch (error) {
+    console.error(error);
+    process.exit(1);
+  }
 }
 main();

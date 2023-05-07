@@ -1,45 +1,38 @@
 import {FastifyInstance} from "fastify";
 import {
-    createProductHandler,
-    deleteProductByIdHandler,
+    postProductHandler,
     getProductByIdHandler,
     getProductsHandler,
-    updateProductHandler
+    test,
+    putProductHandler, deleteProductByIdHandler
 } from "./product.controller";
+import {isAuthenticate} from "../../utils/hash";
 import {$ref} from "./product.schema";
+
+const findProductsResponse: any = {
+    schema: {
+        response: {200: $ref("productsResponseSchema"),},
+    },
+};
+
+const modifyProducts: any = {
+    schema: {
+        body: $ref("createProductSchema"),
+        response: {201: $ref("productResponseSchema"),},
+    }
+};
 
 async function productRoutes(server: FastifyInstance) {
 
-    server.get("/", {
-            preHandler: [server.authenticate],
-            schema: {
-                response: {200: $ref("productsResponseSchema"),},
-            },
-        },
-        getProductsHandler
-    );
+    server.get("/", {...isAuthenticate(server), ...findProductsResponse}, getProductsHandler);
 
-    server.get("/:id", {preHandler: [server.authenticate]}, getProductByIdHandler);
+    server.get("/:id", isAuthenticate(server), getProductByIdHandler);
 
-    server.post("/", {
-            preHandler: [server.authenticate],
-            schema: {
-                body: $ref("createProductSchema"),
-                response: {201: $ref("productResponseSchema"),},
-            },
-        },
-        createProductHandler
-    );
+    server.post("/", {...isAuthenticate(server), ...modifyProducts}, postProductHandler);
 
-    server.put("/:id", {
-        preHandler: [server.authenticate],
-        schema: {
-            body: $ref("createProductSchema"),
-            response: {201: $ref("productResponseSchema"),},
-        },
-    }, updateProductHandler);
+    server.put("/:id", {...isAuthenticate(server), ...modifyProducts}, putProductHandler);
 
-    server.delete("/:id", {preHandler: [server.authenticate]}, deleteProductByIdHandler);
+    server.delete("/:id", isAuthenticate(server), deleteProductByIdHandler);
 }
 
 export default productRoutes;
