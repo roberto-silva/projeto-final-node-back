@@ -1,6 +1,6 @@
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity()
+@Entity({name: 'user'})
 export class UserEntity extends BaseEntity {
 
     @PrimaryGeneratedColumn()
@@ -13,8 +13,8 @@ export class UserEntity extends BaseEntity {
     public password!: string;
 
     @Column({ type: "varchar" })
-    roleId: string;
+    public roleId: string;
 
     @Column("boolean")
-    isDelete: boolean;
+    public isDelete: boolean;
 }

@@ -10,7 +10,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({isGlobal: true}),
     UserModule, AuthModule, ProductModule, RoleModule,
     TypeOrmModule.forRoot({
       type: process.env.DATABASE_TYPE as any,

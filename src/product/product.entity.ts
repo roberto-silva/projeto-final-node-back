@@ -1,6 +1,6 @@
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity()
+@Entity({name: 'product'})
 export class ProductEntity extends BaseEntity {
 
   @PrimaryGeneratedColumn()
@@ -10,5 +10,5 @@ export class ProductEntity extends BaseEntity {
   public name!: string;
 
   @Column("boolean")
-  isDelete: boolean;
+  public isDelete: boolean;
 }
