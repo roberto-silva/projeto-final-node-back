@@ -22,8 +22,8 @@ export class UserController {
   @Role("admin")
   @UseGuards(JwtGuard, RoleGuard)
   @Get("email/:email")
-  private async getUserByName(@Param("name") name: string): Promise<any> {
-    return await this.service.findUserByEmail({ name });
+  private async getUserByName(@Param("email") email: string): Promise<any> {
+    return await this.service.findUserByEmail({ email });
   }
 
   @Role("admin")

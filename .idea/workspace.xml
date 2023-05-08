@@ -29,7 +29,7 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "C:/Users/VIRTUS/Desktop/projeto-final-node-back/src/product",
+    "last_opened_file_path": "C:/Users/VIRTUS/Desktop/projeto-final-node-back",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.standard": "true",
     "node.js.detected.package.tslint": "true",
@@ -50,17 +50,29 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\VIRTUS\Desktop\projeto-final-node-back" />
       <recent name="C:\Users\VIRTUS\Desktop\projeto-final-node-back\src\product" />
       <recent name="C:\Users\VIRTUS\Desktop\projeto-final-node-back\src\user" />
       <recent name="C:\Users\VIRTUS\Desktop\projeto-final-node-back\src\role" />
       <recent name="C:\Users\VIRTUS\Desktop\projeto-final-node-back\src\auth" />
-      <recent name="C:\Users\VIRTUS\Desktop\projeto-final-node-back\src" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\VIRTUS\Desktop\projeto-final-node-back\src\auth\jwt-strategy" />
     </key>
   </component>
-  <component name="RunManager" selected="npm.start:dev">
+  <component name="RunManager" selected="Docker.docker-compose.yaml: Compose Deployment">
+    <configuration default="true" type="docker-deploy" factoryName="docker-compose.yml" temporary="true">
+      <deployment type="docker-compose.yml" />
+      <method v="2" />
+    </configuration>
+    <configuration name="docker-compose.yaml: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="Docker">
+      <deployment type="docker-compose.yml">
+        <settings>
+          <option name="sourceFilePath" value="docker-compose.yaml" />
+        </settings>
+      </deployment>
+      <method v="2" />
+    </configuration>
     <configuration name="lint" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
       <package-json value="$PROJECT_DIR$/package.json" />
       <command value="run" />
@@ -83,6 +95,7 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Docker.docker-compose.yaml: Compose Deployment" />
         <item itemvalue="npm.start:dev" />
         <item itemvalue="npm.lint" />
       </list>
@@ -96,11 +109,29 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1683493202909</updated>
-      <workItem from="1683493204002" duration="12700000" />
+      <workItem from="1683493204002" duration="14839000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/src/product/product.controller.ts</url>
+          <line>43</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="46" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/src/product/product.service.ts</url>
+          <line>71</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="54" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

@@ -104,7 +104,7 @@ export class ProductService implements OnModuleInit {
       const response = await this.findProductById({ id: "1" });
       if (!response.product) {
         await this.repository.save(
-          { id: "1", name: "admin", isDelete: false });
+          { id: "1", name: "test", isDelete: false });
       }
     } catch (error) {
       throw error;
