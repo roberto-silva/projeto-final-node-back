@@ -19,7 +19,26 @@ const knex = require('knex')({
 });
 
 const app = express();
+
+
 app.use(bodyParser.json());
+
+
+app.use(function(req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    next();
+  });
+
+// Configura o middleware de CORS
+app.use(
+    cors({
+      origin: "*", // permitir que solicitações venham de qualquer origem
+      methods: "GET,HEAD,PUT,PATCH,POST,DELETE", // permitir que estes métodos sejam usados nas solicitações
+      preflightContinue: false, // desabilitar a resposta pré-vôo para solicitações em todos os casos
+      optionsSuccessStatus: 204 // definir para 204 para que os navegadores não mostrem a resposta como um erro
+    })
+  );
 
 
 app.use (morgan("tiny"))
@@ -180,15 +199,8 @@ app.delete('/v1/produtos/:id', checkToken, isAdmin, async (req, res) => {
 
 
 
-// Configura o middleware de CORS
-app.use(
-    cors({
-      origin: "*", // permitir que solicitações venham de qualquer origem
-      methods: "GET,HEAD,PUT,PATCH,POST,DELETE", // permitir que estes métodos sejam usados nas solicitações
-      preflightContinue: false, // desabilitar a resposta pré-vôo para solicitações em todos os casos
-      optionsSuccessStatus: 204 // definir para 204 para que os navegadores não mostrem a resposta como um erro
-    })
-  );
+
+  
 
 app.listen(3001, () => {
     console.log('API rodando na porta 3001');
