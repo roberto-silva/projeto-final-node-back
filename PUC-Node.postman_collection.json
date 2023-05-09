@@ -21,7 +21,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:3001/seguranca/register",
+					"raw": "http://34.228.17.139:3001/seguranca/register",
 					"protocol": "http",
 					"host": [
 						"localhost"
