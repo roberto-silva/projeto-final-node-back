@@ -1,6 +1,8 @@
 
 require('dotenv').config()
 
+const cors = require('cors');
+
 const express = require('express');
 const morgan = require ('morgan')
 const helmet = require ('helmet')
@@ -176,6 +178,13 @@ app.delete('/v1/produtos/:id', checkToken, isAdmin, async (req, res) => {
 });
   
 
+
+
+app.use(cors({
+    origin: '*'
+  }));
+
 app.listen(3001, () => {
     console.log('API rodando na porta 3001');
 });
+
