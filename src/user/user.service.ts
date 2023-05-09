@@ -1,9 +1,9 @@
-import { HttpStatus, Injectable, OnModuleInit } from "@nestjs/common";
-import { UserEntity } from "./user.entity";
-import { firstValueFrom, from, map } from "rxjs";
-import { paginate, Pagination } from "nestjs-typeorm-paginate";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import {HttpStatus, Injectable, OnModuleInit} from "@nestjs/common";
+import {UserEntity} from "./user.entity";
+import {firstValueFrom, from, map} from "rxjs";
+import {paginate, Pagination} from "nestjs-typeorm-paginate";
+import {InjectRepository} from "@nestjs/typeorm";
+import {Repository} from "typeorm";
 
 @Injectable()
 export class UserService implements OnModuleInit {
@@ -12,7 +12,7 @@ export class UserService implements OnModuleInit {
   private readonly repository: Repository<UserEntity>;
 
   async onModuleInit(): Promise<any> {
-    await this.insertBaseUser();
+    // await this.insertBaseUser();
   }
 
   public async findAllUser(payload: Request | any): Promise<any> {
@@ -45,8 +45,8 @@ export class UserService implements OnModuleInit {
   private async findUserBy?(payload: Request | any, type: string): Promise<any> {
     try {
       const response: any = await this.repository
-        .createQueryBuilder(String(process.env.DATABASE_NAME))
-        .where(`${process.env.DATABASE_NAME}.${type} = :${type}`, { [type]: payload[type] })
+        .createQueryBuilder(String(process.env.PG_DB))
+        .where(`${process.env.PG_DB}.${type} = :${type}`, { [type]: payload[type] })
         .getOne();
       return response;
     } catch (error) {
@@ -57,8 +57,8 @@ export class UserService implements OnModuleInit {
   public async removeUserById(payload: Request | any): Promise<any> {
     try {
       const query = JSON.parse(payload.query);
-      let response = await this.repository.createQueryBuilder(process.env.DATABASE_NAME)
-        .where(`${process.env.DATABASE_NAME}.id = :id`, { id: query.id })
+      let response = await this.repository.createQueryBuilder(process.env.PG_DB)
+        .where(`${process.env.PG_DB}.id = :id`, { id: query.id })
         .getOne();
       if (response) {
         response.isDelete = !response?.isDelete;
@@ -76,9 +76,9 @@ export class UserService implements OnModuleInit {
     try {
       let role;
       if (payload?.id) {
-        let response = await this.repository.createQueryBuilder(process.env.DATABASE_NAME)
-          .where(`${process.env.DATABASE_NAME}.id = :id`, { id: payload.id })
-          .andWhere(`${process.env.DATABASE_NAME}.isDelete = false`)
+        let response = await this.repository.createQueryBuilder(process.env.PG_DB)
+          .where(`${process.env.PG_DB}.id = :id`, { id: payload.id })
+          .andWhere(`${process.env.PG_DB}.isDelete = false`)
           .getOne();
         if (response) {
           role = await this.repository.createQueryBuilder()
@@ -110,7 +110,7 @@ export class UserService implements OnModuleInit {
       const response = await this.findUserById({ id: "1" });
       if (response.user === undefined || response.user === null) {
         await this.repository.insert({
-          id: 1, password: "$2a$10$CrvQB6BbIJlAdDrDITITH.QqlOUqOuhcmzMbkyVHPOlvRRTjQhr3i",
+          id: '1', password: "$2a$10$CrvQB6BbIJlAdDrDITITH.QqlOUqOuhcmzMbkyVHPOlvRRTjQhr3i",
           email: "admin@gmail.com", roleId: "1", isDelete: false
         });
       }

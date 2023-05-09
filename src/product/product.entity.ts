@@ -1,4 +1,4 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import {BaseEntity, Column, Entity, PrimaryGeneratedColumn} from "typeorm";
 
 @Entity({name: 'product'})
 export class ProductEntity extends BaseEntity {
@@ -9,6 +9,6 @@ export class ProductEntity extends BaseEntity {
   @Column({ type: "varchar" })
   public name!: string;
 
-  @Column("boolean")
+  @Column({type: "boolean"})
   public isDelete: boolean;
 }

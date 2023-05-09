@@ -1,9 +1,9 @@
-import { HttpStatus, Injectable, OnModuleInit } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
-import { firstValueFrom, from, map } from "rxjs";
-import { paginate, Pagination } from "nestjs-typeorm-paginate";
-import { ProductEntity } from "./product.entity";
+import {HttpStatus, Injectable, OnModuleInit} from "@nestjs/common";
+import {InjectRepository} from "@nestjs/typeorm";
+import {Repository} from "typeorm";
+import {firstValueFrom, from, map} from "rxjs";
+import {paginate, Pagination} from "nestjs-typeorm-paginate";
+import {ProductEntity} from "./product.entity";
 
 @Injectable()
 export class ProductService implements OnModuleInit {
@@ -12,7 +12,7 @@ export class ProductService implements OnModuleInit {
   private readonly repository: Repository<ProductEntity>;
 
   public async onModuleInit(): Promise<any> {
-    await this.insertBaseProduct();
+    // await this.insertBaseProduct();
   }
 
   public async findAllProduct(payload: Request | any): Promise<any> {
@@ -42,8 +42,8 @@ export class ProductService implements OnModuleInit {
 
   public async removeProductById(payload: Request | any): Promise<any> {
     try {
-      let response = await this.repository.createQueryBuilder(process.env.DATABASE_NAME)
-        .where(`${process.env.DATABASE_NAME}.id = :id`, { id: payload })
+      let response = await this.repository.createQueryBuilder(process.env.PG_DB)
+        .where(`${process.env.PG_DB}.id = :id`, { id: payload })
         .getOne();
       if (response) {
         response.isDelete = !response?.isDelete;
@@ -70,9 +70,9 @@ export class ProductService implements OnModuleInit {
     try {
       let product;
       if (payload?.id) {
-        let response = await this.repository.createQueryBuilder(process.env.DATABASE_NAME)
-          .where(`${process.env.DATABASE_NAME}.id = :id`, { id: payload.id })
-          .andWhere(`${process.env.DATABASE_NAME}.isDelete = false`)
+        let response = await this.repository.createQueryBuilder(process.env.PG_DB)
+          .where(`${process.env.PG_DB}.id = :id`, { id: payload.id })
+          .andWhere(`${process.env.PG_DB}.isDelete = false`)
           .getOne();
         if (response) {
           product = await this.repository.createQueryBuilder()
@@ -90,9 +90,9 @@ export class ProductService implements OnModuleInit {
   private async findProductBy?(payload: Request | any, type: string): Promise<any> {
     try {
       return await this.repository
-        .createQueryBuilder(process.env.DATABASE_NAME)
-        .where(`${process.env.DATABASE_NAME}.${type} = :${type}`, { [type]: payload[type] })
-        .andWhere(`${process.env.DATABASE_NAME}.isDelete = false`)
+        .createQueryBuilder(process.env.PG_DB)
+        .where(`${process.env.PG_DB}.${type} = :${type}`, { [type]: payload[type] })
+        .andWhere(`${process.env.PG_DB}.isDelete = false`)
         .getOne();
     } catch (error) {
       throw error;
@@ -101,10 +101,10 @@ export class ProductService implements OnModuleInit {
 
   private async insertBaseProduct(): Promise<void> {
     try {
-      const response = await this.findProductById({ id: "1" });
+      const response = await this.findProductById({ id: '1' });
       if (!response.product) {
-        await this.repository.save(
-          { id: "1", name: "test", isDelete: false });
+        await this.repository.insert(
+          { id: '1', name: "test", isDelete: false });
       }
     } catch (error) {
       throw error;

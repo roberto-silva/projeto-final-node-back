@@ -9,6 +9,6 @@ export class RoleEntity extends BaseEntity {
   @Column({ type: "varchar" })
   public name!: string;
 
-  @Column("boolean")
+  @Column({type: "boolean"})
   public isDelete: boolean;
 }

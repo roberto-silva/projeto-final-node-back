@@ -1,27 +1,32 @@
-version: '3'
-
+version: '3.9'
 services:
-  db:
-    restart: always
-    image: postgres:latest
+  nestapp:
+    container_name: nestapp
+    image: francescoxx/nestapp:1.0.0
+    build: .
+    command: npm run start-container
     ports:
-      - 543:5432
+      - '3000:3000'
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=root
-      - POSTGRES_DB=project_database
-  app:
-    container_name: projeto-final-node-back
-    build:
-      context: .
-      dockerfile: Dockerfile
-    volumes:
-      - ./:/usr/src/app
-    environment:
-      - PORT=3000
-    ports:
-      - 3000:3000
-    links:
-      - db
+      - DB_TYPE=postgres
+      - PG_USER=postgres
+      - PG_PASSWORD=postgres
+      - PG_DB=postgres
+      - PG_PORT=5432
+      - PG_HOST=db
     depends_on:
       - db
+  db:
+    container_name: db
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+
+    ports:
+      - '5432:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+volumes:
+  pgdata: {}
