@@ -71,7 +71,9 @@ const checkToken = (req, res, next) => {
   };
 
   const isAdmin  = (req, res, next) => {
-    if (req.roles?.split(';').includes('ADMIN')){
+    //if (req.roles?.split(';').includes('ADMIN')){
+    if (req.roles != null && req.roles.split(';').includes('ADMIN')) {
+
         next()
     }
     else {
