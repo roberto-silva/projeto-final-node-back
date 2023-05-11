@@ -159,7 +159,7 @@ app.delete('/v1/produtos/:id', checkToken, isAdmin, async (req, res) => {
           return
       })
       .catch(err => {
-          res.status(500).json({ 
+          res.status(400).json({ 
               message: 'Erro ao registrar usuario - ' + err.message })
       })  
   });
