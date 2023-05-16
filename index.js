@@ -160,7 +160,7 @@ app.delete('/v1/produtos/:id', checkToken, isAdmin, async (req, res) => {
       })
       .catch(err => {
           res.status(400).json({ 
-              message: 'Erro ao registrar usuario - ' + err.message })
+              message: 'Ja existe um usuario com esses parametros cadastrados' })
       })  
   });
 
@@ -173,19 +173,19 @@ app.delete('/v1/produtos/:id', checkToken, isAdmin, async (req, res) => {
           let usuario = usuarios[0]
           let checkSenha = bcrypt.compareSync (req.body.senha, usuario.senha)
           if (checkSenha) {
-             var tokenJWT = jwt.sign({ id: usuario.id, roles: usuario.roles }, 
+             var tokenJWT = jwt.sign({ id: usuario.id, roles: usuario.roles },
                   process.env.SECRET_KEY, {
                     expiresIn: 3600
                   })
 
               res.status(200).json ({
                   id: usuario.id,
-                  login: usuario.login, 
-                  nome: usuario.nome, 
+                  login: usuario.login,
+                  nome: usuario.nome,
                   roles: usuario.roles,
                   token: tokenJWT
-              })  
-              return 
+              })
+              return
           }
       } 
         
@@ -193,7 +193,7 @@ app.delete('/v1/produtos/:id', checkToken, isAdmin, async (req, res) => {
   })
   .catch (err => {
       res.status(500).json({ 
-         message: 'Erro ao verificar login - ' + err.message })
+         message: 'Credenciais inválidas!' })
   })
 
 });
