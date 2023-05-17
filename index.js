@@ -192,8 +192,6 @@ app.delete('/v1/produtos/:id', checkToken, isAdmin, async (req, res) => {
       res.status(401).json({ message: 'Login ou senha incorretos' })
   })
   .catch (err => {
-      console.log(err)
-
       res.status(500).json({ 
          message: 'Credenciais inválidas!' })
   })
